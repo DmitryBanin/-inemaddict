@@ -1,32 +1,19 @@
 
 import {render} from '../render.js';
-import FilmsView from '../view/films-view.js';
-import FilmsListView from '../view/films-list-view.js';
-import FilmsListContainerView from '../view/films-list-container-view.js';
-import FilmCardView from '../view/film-card-view.js';
-import ButtonShowMoreView from '../view/button-show-more-view.js';
-import PopupFilmView from '../view/popup-film-view.js';
-
-const NUMBER_OF_CARD = 5;
+import MainNavigationView from '../view/main-navigation-view.js';
+import SortView from '../view/sort-view.js';
+import FilmListPresenter from './film-list-presenter.js';
 
 export default class FilmPresenter {
-  filmsComponent = new FilmsView();
-  filmsListComponent = new FilmsListView();
-  filmsListContainerComponent = new FilmsListContainerView();
+  filmListPresenter = new FilmListPresenter();
 
-
-  init = (filmContainer) => {
+  init = (filmContainer, cardsModel) => {
     this.filmContainer = filmContainer;
+    this.cardsModel = cardsModel;
 
-    render(this.filmsComponent, this.filmContainer);
-    render(this.filmsListComponent, this.filmsComponent.getElement());
-    render(this.filmsListContainerComponent, this.filmsListComponent.getElement());
+    render(new MainNavigationView(), this.filmContainer);
+    render(new SortView(), this.filmContainer);
 
-    for (let i = 0; i < NUMBER_OF_CARD; i++) {
-      render(new FilmCardView(), this.filmsListContainerComponent.getElement());
-    }
-
-    render(new ButtonShowMoreView(), this.filmsListComponent.getElement());
-    render(new PopupFilmView(), this.filmContainer);
+    this.filmListPresenter.filmList(this.filmContainer, this.cardsModel);
   };
 }
