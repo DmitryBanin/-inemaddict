@@ -1,4 +1,5 @@
 
+import { nanoid } from 'nanoid';
 import { getRandomInteger, getRandomFloat, getRandomElement, getRandomIndexFromList, getRandomDate} from '../utils.js';
 
 const filmTitles = [
@@ -93,8 +94,12 @@ const MAX_AGE_RATINGS_COUNT = 18;
 const MIN_TOTAL_RATINGS_COUNT = 0;
 const MAX_TOTAL_RATINGS_COUNT = 10;
 
-export const generateComment = () => (
+const MIN_COMMENT = 0;
+const MAX_COMMENT = 15;
+
+const generateComment = () => (
   {
+    id: nanoid(4),
     author: getRandomElement(authores),
     comment: getRandomElement(comments),
     date: getRandomDate(startDate, endDate),
@@ -103,6 +108,8 @@ export const generateComment = () => (
 
 export const generateFilmCard = () => (
   {
+    id: nanoid(4),
+    comments: Array.from({ length: getRandomInteger(MIN_COMMENT, MAX_COMMENT) }, generateComment),
     filmInfo: {
       title: getRandomElement(filmTitles),
       alternativeTitle: getRandomElement(alternativeTitles),

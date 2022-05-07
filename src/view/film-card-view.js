@@ -2,8 +2,9 @@ import { createElement } from '../render.js';
 import dayjs from 'dayjs';
 import { getTimeFromMins } from '../utils.js';
 
-const createFilmCardTemplate = (card) => {
-  const { filmInfo, userDetails, comments } = card;
+const createFilmCardTemplate = (filmcard) => {
+  console.log(filmcard);
+  const { filmInfo, userDetails, comments } = filmcard;
   const { release, title, poster, totalRating, genre, description, runTime } = filmInfo;
   const { date } = release;
   const durationFormat = getTimeFromMins(runTime);

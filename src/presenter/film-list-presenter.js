@@ -12,16 +12,15 @@ export default class FilmListPresenter {
   filmsListContainerComponent = new FilmsListContainerView();
   popupFilmPresenter = new PopupFilmPresenter();
 
-  filmList = (filmlistContainer, filmCardsModel) => {
-    this.filmlistContainer = filmlistContainer; // что это за реструктуризация ?
+  initFilmList = (filmlistContainer, filmCardsModel) => {
+    this.filmlistContainer = filmlistContainer;
     this.filmCards = filmCardsModel;
-
 
     render(this.filmsComponent, this.filmlistContainer);
     render(this.filmsListComponent, this.filmsComponent.getElement());
     render(this.filmsListContainerComponent, this.filmsListComponent.getElement());
 
-    for (let i = 1; i < this.filmCards.length; i++) {
+    for (let i = 0; i < this.filmCards.length; i++) {
       render(new FilmCardView(this.filmCards[i]), this.filmsListContainerComponent.getElement());
     }
 
