@@ -24,6 +24,6 @@ export default class FilmPresenter {
     this.cardsModel = cardsModel;
     this.filmCards = [...this.cardsModel.getFilmCards()];
 
-    render(new StatisticsView(), this.filmCards.getElement());
+    render(new StatisticsView(this.filmCards.length), this.filmCards.getElement());
   };
 }
