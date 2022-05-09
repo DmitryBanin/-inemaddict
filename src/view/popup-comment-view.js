@@ -1,8 +1,8 @@
 import { createElement } from '../render.js';
 import dayjs from 'dayjs';
 
-const createPopupCommentTemplate = (items) => {
-  const { author, comment, date, emotion } = items;
+const createPopupCommentTemplate = (comments) => {
+  const { author, comment, date, emotion } = comments;
   const commentDay = dayjs(date).format('YYYY/MM/DD HH:mm');
 
   return (
@@ -23,12 +23,12 @@ const createPopupCommentTemplate = (items) => {
 };
 
 export default class PopupCommentView {
-  constructor(filmCard) {
-    this.filmCard = filmCard;
+  constructor(comments) {
+    this.comments = comments;
   }
 
   getTemplate() {
-    return createPopupCommentTemplate(this.filmCard);
+    return createPopupCommentTemplate(this.comments);
   }
 
   getElement() {

@@ -24,8 +24,8 @@ export default class FilmListPresenter {
       render(new FilmCardView(this.filmCards[i]), this.filmsListContainerComponent.getElement());
     }
 
-    render(new ButtonShowMoreView(), this.filmsListComponent.getElement());
+    this.popupFilmPresenter.showPopup(this.filmListContainer, this.filmCards[0]);
 
-    this.popupFilmPresenter.popupFilm(this.filmListContainer);
+    render(new ButtonShowMoreView(), this.filmsListComponent.getElement());
   };
 }
