@@ -1,10 +1,8 @@
-import { generateFilmCard } from '../mock/film-data.js';
-
-const FILM_CARDS_QUANTITY = 30;
+import { filmCards, filmComments, genereteFilmCard} from '../mock/data.js';
 
 export default class CardsModel {
 
-  filmCards = Array.from({ length: FILM_CARDS_QUANTITY }, generateFilmCard);
+  filmCards = genereteFilmCard(filmCards, filmComments);
 
   getFilmCards = () => this.filmCards;
 }

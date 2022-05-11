@@ -1,6 +1,34 @@
 
-import { nanoid } from 'nanoid';
-import { getRandomInteger, getRandomFloat, getRandomElement, getRandomIndexFromList, getRandomDate} from '../utils.js';
+// функция рандомного целого числа
+const getRandomInteger = (a = 0, b = 1) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
+// функция для рандомного дробного числа
+const getRandomFloat = (min, max, digits = 1) => (Math.random() * (max - min) + min).toFixed(digits);
+
+// функция рандомного индекса массива
+const getRandomElement = (elements) => elements [getRandomInteger(0, elements.length - 1)];
+
+// функция рандомного индекса
+const getRandomIndexFromList = (list, count) => {
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    const randomIndex = getRandomInteger(0, list.length-1);
+    result.push(list[randomIndex]);
+  }
+  return result;
+};
+
+// функция рандомной даты
+const getRandomDate = (start, end) => {
+  start = new Date(start).getTime();
+  end = new Date(end).getTime();
+  return  new Date(start + Math.random() * (end - start));
+};
+
 
 const filmTitles = [
   'Popeye the Sailor Meets Sindbad the Sailor',
@@ -94,22 +122,16 @@ const MAX_AGE_RATINGS_COUNT = 18;
 const MIN_TOTAL_RATINGS_COUNT = 0;
 const MAX_TOTAL_RATINGS_COUNT = 10;
 
-const MIN_COMMENT = 0;
-const MAX_COMMENT = 15;
-
 const generateComment = () => (
   {
-    id: nanoid(4),
     author: getRandomElement(authores),
     comment: getRandomElement(comments),
     date: getRandomDate(startDate, endDate),
     emotion: getRandomElement(emotions),
   });
 
-export const generateFilmCard = () => (
+const generateFilmCard = () => (
   {
-    id: nanoid(4),
-    comments: Array.from({ length: getRandomInteger(MIN_COMMENT, MAX_COMMENT) }, generateComment),
     filmInfo: {
       title: getRandomElement(filmTitles),
       alternativeTitle: getRandomElement(alternativeTitles),
@@ -134,3 +156,27 @@ export const generateFilmCard = () => (
       favorite: getRandomInteger(),
     }
   });
+
+const generetIdIndex = (element, index) => {
+  element.id = index;
+  return element;
+};
+
+const FILM_CARDS_QUANTITY = 30;
+const COMMENTS_QUANTITY = 100;
+const FILM_COMMENTS_QUANTITY = 20;
+
+export const filmComments = Array.from({ length: COMMENTS_QUANTITY }, generateComment);
+export const filmCards = Array.from({ length: FILM_CARDS_QUANTITY }, generateFilmCard);
+
+const generetCommentsCard = (element) => {
+  element.comments = getRandomIndexFromList(filmComments, getRandomInteger(FILM_COMMENTS_QUANTITY));
+  return element;
+};
+
+export const genereteFilmCard = (card, comment) => {
+  card.map(generetIdIndex);
+  comment.map(generetIdIndex);
+  card.map(generetCommentsCard);
+  return card;
+};

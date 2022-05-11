@@ -3,7 +3,7 @@ import {render} from '../render.js';
 import MainNavigationView from '../view/main-navigation-view.js';
 import SortView from '../view/sort-view.js';
 import FilmListPresenter from './film-list-presenter.js';
-// import StatisticsView from '../view/statistics-view.js';
+import StatisticsView from '../view/statistics-view.js';
 
 export default class FilmPresenter {
   filmListPresenter = new FilmListPresenter();
@@ -24,6 +24,6 @@ export default class FilmPresenter {
     this.cardsModel = cardsModel;
     this.filmCards = [...this.cardsModel.getFilmCards()];
 
-    // render(new StatisticsView(this.filmCards.length), this.filmCards);
+    render(new StatisticsView(this.filmCards), this.filmContainer);
   };
 }
