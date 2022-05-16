@@ -46,7 +46,24 @@ export const getTimeFromMins = (min) => {
   }
 };
 
-export const generetCommentsCard = (element, comments, commentsQuantity) => {
-  element.comments = getRandomIndexFromList(comments, getRandomInteger(commentsQuantity));
-  return element;
+// функция рандомного индекса id комментария
+export const getRandomIndexForComments = (list, count) => {
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    const randomIndex = getRandomInteger(0, list.length-1);
+    result.push(list[randomIndex].id);
+  }
+  return result;
+};
+
+// функция генрации id вкарточке фильма
+export const genereteCommenatIdInFilmCard = (filmComments, filmCards, numberOfCommentsOnFilm) => {
+
+  const generetCommentsCard = (element) => {
+    element.comments = getRandomIndexForComments(filmComments, getRandomInteger(numberOfCommentsOnFilm));
+    return element;
+  };
+
+  filmCards.map(generetCommentsCard);
+  return filmCards;
 };

@@ -4,19 +4,24 @@ import PopupCommentView from '../view/popup-comment-view.js';
 
 
 export default class PopupFilmPresenter {
-  showPopup = (popupFilmContainer, filmCards) => {
-    this.filmCards = filmCards;
-    this.comments = filmCards.comments;
-    this.popupFilmView = new PopupFilmView(this.filmCards);
+  showPopup = (popupFilmContainer, filmCard, filmComments) => {
+    this.filmCard = filmCard;
+    this.commentsId = filmCard.comments;
+    this.filmComments = filmComments;
+    this.popupFilmView = new PopupFilmView(this.filmCard);
 
     this.popupFilmContainer = popupFilmContainer;
 
     render(this.popupFilmView, this.popupFilmContainer);
 
-    this.commentsList = document.querySelector('.film-details__comments-list');
+    this.commentsIdList = document.querySelector('.film-details__comments-list');
 
-    for (let i = 0; i < this.comments.length; i++) {
-      render(new PopupCommentView(this.comments[i]), this.commentsList);
+    for (let i = 0; i < this.commentsId.length; i++) {
+      for (let j = 0; j < this.filmComments.length; j++) {
+        if (this.filmComments[j].id === this.commentsId[i]) {
+          render(new PopupCommentView(this.filmComments[j]), this.commentsIdList);
+        }
+      }
     }
   };
 }

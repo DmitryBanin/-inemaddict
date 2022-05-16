@@ -122,7 +122,7 @@ const MAX_AGE_RATINGS_COUNT = 18;
 const MIN_TOTAL_RATINGS_COUNT = 0;
 const MAX_TOTAL_RATINGS_COUNT = 10;
 
-const generateComment = () => (
+export const generateComments = () => (
   {
     author: getRandomElement(authores),
     comment: getRandomElement(comments),
@@ -130,8 +130,9 @@ const generateComment = () => (
     emotion: getRandomElement(emotions),
   });
 
-const generateFilmCard = () => (
+export const generateFilmCard = () => (
   {
+    comments: [1, 2, 30],
     filmInfo: {
       title: getRandomElement(filmTitles),
       alternativeTitle: getRandomElement(alternativeTitles),
@@ -156,27 +157,3 @@ const generateFilmCard = () => (
       favorite: getRandomInteger(),
     }
   });
-
-const generetIdIndex = (element, index) => {
-  element.id = index;
-  return element;
-};
-
-const FILM_CARDS_QUANTITY = 30;
-const COMMENTS_QUANTITY = 100;
-const FILM_COMMENTS_QUANTITY = 20;
-
-export const filmComments = Array.from({ length: COMMENTS_QUANTITY }, generateComment);
-export const filmCards = Array.from({ length: FILM_CARDS_QUANTITY }, generateFilmCard);
-
-const generetCommentsCard = (element) => {
-  element.comments = getRandomIndexFromList(filmComments, getRandomInteger(FILM_COMMENTS_QUANTITY));
-  return element;
-};
-
-export const genereteFilmCard = (card, comment) => {
-  card.map(generetIdIndex);
-  comment.map(generetIdIndex);
-  card.map(generetCommentsCard);
-  return card;
-};

@@ -12,9 +12,10 @@ export default class FilmListPresenter {
   filmsListContainerComponent = new FilmsListContainerView();
   popupFilmPresenter = new PopupFilmPresenter();
 
-  initFilmList = (filmListContainer, filmCardsModel) => {
+  initFilmList = (filmListContainer, filmCardsModel, filmCommentsModel) => {
     this.filmListContainer = filmListContainer;
     this.filmCards = filmCardsModel;
+    this.filmComments = filmCommentsModel;
 
     render(this.filmsComponent, this.filmListContainer);
     render(this.filmsListComponent, this.filmsComponent.getElement());
@@ -24,7 +25,7 @@ export default class FilmListPresenter {
       render(new FilmCardView(this.filmCards[i]), this.filmsListContainerComponent.getElement());
     }
 
-    this.popupFilmPresenter.showPopup(this.filmListContainer, this.filmCards[0]);
+    this.popupFilmPresenter.showPopup(this.filmListContainer, this.filmCards[0], this.filmComments);
 
     render(new ButtonShowMoreView(), this.filmsListComponent.getElement());
   };
