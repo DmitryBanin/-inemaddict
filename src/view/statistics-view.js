@@ -1,10 +1,13 @@
 import {createElement} from '../render.js';
 
-const createStatisticsTemplate = () => '<p>130 291 movies inside</p>';
-
+const createStatisticsTemplate = (count) => `<p>${count.length} movies inside</p>`;
 export default class StatisticsView {
+  constructor(filmCard) {
+    this.filmCard = filmCard;
+  }
+
   getTemplate() {
-    return  createStatisticsTemplate();
+    return  createStatisticsTemplate(this.filmCard);
   }
 
   getElement() {

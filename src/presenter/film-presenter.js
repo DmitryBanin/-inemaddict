@@ -1,32 +1,34 @@
 
 import {render} from '../render.js';
-import FilmsView from '../view/films-view.js';
-import FilmsListView from '../view/films-list-view.js';
-import FilmsListContainerView from '../view/films-list-container-view.js';
-import FilmCardView from '../view/film-card-view.js';
-import ButtonShowMoreView from '../view/button-show-more-view.js';
-import PopupFilmView from '../view/popup-film-view.js';
-
-const NUMBER_OF_CARD = 5;
+import MainNavigationView from '../view/main-navigation-view.js';
+import SortView from '../view/sort-view.js';
+import FilmListPresenter from './film-list-presenter.js';
+import StatisticsView from '../view/statistics-view.js';
+import { genereteCommenatIdInFilmCard } from '../utils.js';
 
 export default class FilmPresenter {
-  filmsComponent = new FilmsView();
-  filmsListComponent = new FilmsListView();
-  filmsListContainerComponent = new FilmsListContainerView();
+  filmListPresenter = new FilmListPresenter();
 
-
-  init = (filmContainer) => {
+  initMain = (filmContainer, cardsModel, commentsModel) => {
     this.filmContainer = filmContainer;
+    this.cardsModel = cardsModel;
+    this.commentsModel = commentsModel;
+    this.filmCards = [...this.cardsModel.getFilmCards()];
+    this.filmComments = [...this.commentsModel.getFilmComments()];
 
-    render(this.filmsComponent, this.filmContainer);
-    render(this.filmsListComponent, this.filmsComponent.getElement());
-    render(this.filmsListContainerComponent, this.filmsListComponent.getElement());
+    this.filmCardsWithCommentsId = genereteCommenatIdInFilmCard(this.filmComments, this.filmCards, 20); // добавляю id комментариев в карточку
 
-    for (let i = 0; i < NUMBER_OF_CARD; i++) {
-      render(new FilmCardView(), this.filmsListContainerComponent.getElement());
-    }
+    render(new MainNavigationView(), this.filmContainer);
+    render(new SortView(), this.filmContainer);
 
-    render(new ButtonShowMoreView(), this.filmsListComponent.getElement());
-    render(new PopupFilmView(), this.filmContainer);
+    this.filmListPresenter.initFilmList(this.filmContainer, this.filmCardsWithCommentsId, this.filmComments);
+  };
+
+  initFooter = (filmContainer, cardsModel) => {
+    this.filmContainer = filmContainer;
+    this.cardsModel = cardsModel;
+    this.filmCards = [...this.cardsModel.getFilmCards()];
+
+    render(new StatisticsView(this.filmCards), this.filmContainer);
   };
 }
