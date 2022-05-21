@@ -23,24 +23,27 @@ const createPopupCommentTemplate = (comments) => {
 };
 
 export default class PopupCommentView {
+  #element = null;
+  #comments = null;
+
   constructor(comments) {
-    this.comments = comments;
+    this.#comments = comments;
   }
 
-  getTemplate() {
-    return createPopupCommentTemplate(this.comments);
+  get template() {
+    return createPopupCommentTemplate(this.#comments);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 

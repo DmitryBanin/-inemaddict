@@ -5,7 +5,9 @@ const FILM_CARDS_QUANTITY = 30;
 
 export default class CardsModel {
 
-  filmCards = Array.from({ length: FILM_CARDS_QUANTITY }, generateFilmCard).map(generetIdIndex);
+  #cards = Array.from({ length: FILM_CARDS_QUANTITY }, generateFilmCard).map(generetIdIndex);
 
-  getFilmCards = () => this.filmCards;
+  get cards() {
+    return this.#cards;
+  }
 }
