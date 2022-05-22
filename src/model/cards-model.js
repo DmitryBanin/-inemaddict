@@ -1,7 +1,7 @@
 import { generateFilmCard } from '../mock/data.js';
 import { generetIdIndex } from '../utils.js';
 
-const FILM_CARDS_QUANTITY = 30;
+const FILM_CARDS_QUANTITY = 33;
 
 export default class CardsModel {
 

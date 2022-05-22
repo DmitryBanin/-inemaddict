@@ -5,6 +5,12 @@ import SortView from '../view/sort-view.js';
 import FilmListPresenter from './film-list-presenter.js';
 import StatisticsView from '../view/statistics-view.js';
 import { genereteCommenatIdInFilmCard } from '../utils.js';
+import ListEmptyView from '../view/list-empty-view.js';
+import UserRankView from '../view/user-rank-view.js';
+
+const FILM_COMMENTS_QUANTITY = 20;
+const siteFooterElement = document.querySelector('.footer__statistics');
+const siteHeaderElement = document.querySelector('.header');
 
 export default class FilmPresenter {
   #filmContainer = null;
@@ -13,7 +19,9 @@ export default class FilmPresenter {
   #filmCards = [];
   #filmComments = [];
   #filmListPresenter = new FilmListPresenter();
-  #FILM_COMMENTS_QUANTITY = 20;
+  #renderCommentsCount = FILM_COMMENTS_QUANTITY;
+  #siteHeaderElement = siteHeaderElement;
+  #siteFooterElement = siteFooterElement;
 
   initMain = (filmContainer, cardsModel, commentsModel) => {
     this.#filmContainer = filmContainer;
@@ -22,19 +30,21 @@ export default class FilmPresenter {
     this.#filmCards = [...this.#cardsModel.cards];
     this.#filmComments = [...this.#commentsModel.comments];
 
-    this.filmCardsWithCommentsId = genereteCommenatIdInFilmCard(this.#filmComments, this.#filmCards, this.#FILM_COMMENTS_QUANTITY); // добавляю id комментарии в карточку
+    this.filmCardsWithCommentsId = genereteCommenatIdInFilmCard(this.#filmComments, this.#filmCards, this.#renderCommentsCount); // добавляю id комментарии в карточку
 
     render(new MainNavigationView(), this.#filmContainer);
-    render(new SortView(), this.#filmContainer);
 
-    this.#filmListPresenter.initFilmList(this.#filmContainer, this.filmCardsWithCommentsId, this.#filmComments);
-  };
+    render(new StatisticsView(this.#filmCards), this.#siteFooterElement);
 
-  initFooter = (filmContainer, cardsModel) => {
-    this.#filmContainer = filmContainer;
-    this.#cardsModel = cardsModel;
-    this.#filmCards = [...this.#cardsModel.cards];
+    if (!this.#filmCards.length) {
+      render(new ListEmptyView(), this.#filmContainer);
+    } else {
+      render(new SortView(), this.#filmContainer);
 
-    render(new StatisticsView(this.#filmCards), this.#filmContainer);
+      render(new UserRankView(), this.#siteHeaderElement);
+
+      this.#filmListPresenter.initFilmList(this.#filmContainer, this.filmCardsWithCommentsId, this.#filmComments);
+
+    }
   };
 }
