@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import { getTimeFromMins } from '../utils.js';
 
@@ -144,11 +144,11 @@ const createPopupFilmTemplate = (filmcard) => {
   );
 };
 
-export default class PopupFilmView{
-  #element = null;
+export default class PopupFilmView extends AbstractView {
   #filmCard = null;
 
   constructor(filmCard) {
+    super();
     this.#filmCard = filmCard;
   }
 
@@ -156,15 +156,13 @@ export default class PopupFilmView{
     return createPopupFilmTemplate(this.#filmCard);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setPopupClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupclickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #popupclickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }

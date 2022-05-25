@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import {render, remove} from '../framework/render.js';
 import FilmsView from '../view/films-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsListContainerView from '../view/films-list-container-view.js';
@@ -37,12 +37,11 @@ export default class FilmListPresenter {
     if (this.#filmCards.length > CARD_COUNT_PER_STEP) {
       render(this.#buttonShowMoreComponent, this.#filmsListComponent.element);
 
-      this.#buttonShowMoreComponent.element.addEventListener('click', this.#handleButtonShowMoreClick);
+      this.#buttonShowMoreComponent.setClickHandler(this.#handleButtonShowMoreClick);
     }
   };
 
-  #handleButtonShowMoreClick = (evt) => {
-    evt.preventDefault();
+  #handleButtonShowMoreClick = () => {
     this.#filmCards
       .slice(this.#renderedCardsCount, this.#renderedCardsCount + CARD_COUNT_PER_STEP)
       .forEach((filmCard) => this.#renderCard(filmCard));
@@ -50,8 +49,7 @@ export default class FilmListPresenter {
     this.#renderedCardsCount += CARD_COUNT_PER_STEP;
 
     if (this.#renderedCardsCount >= this.#filmCards.length) {
-      this.#buttonShowMoreComponent.element.remove();
-      this.#buttonShowMoreComponent.removeElement();
+      remove(this.#buttonShowMoreComponent);
     }
   };
 
@@ -90,14 +88,13 @@ export default class FilmListPresenter {
       }
     };
 
-    filmCardComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
+    filmCardComponent.setFilmCardClickHandler(() => {
       replacefilmCardToForm();
       document.body.classList.add('hide-overflow');
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    popupFilmView.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    popupFilmView.setPopupClickHandler(() => {
       replaceFormTofilmCard();
       document.body.classList.remove('hide-overflow');
       document.removeEventListener('keydown', onEscKeyDown);
