@@ -1,5 +1,4 @@
-
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import MainNavigationView from '../view/main-navigation-view.js';
 import SortView from '../view/sort-view.js';
 import FilmListPresenter from './film-list-presenter.js';

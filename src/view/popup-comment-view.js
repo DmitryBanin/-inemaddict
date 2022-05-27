@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 const createPopupCommentTemplate = (comments) => {
@@ -22,28 +22,16 @@ const createPopupCommentTemplate = (comments) => {
   );
 };
 
-export default class PopupCommentView {
-  #element = null;
+export default class PopupCommentView extends AbstractView {
   #comments = null;
 
   constructor(comments) {
+    super();
     this.#comments = comments;
   }
 
   get template() {
     return createPopupCommentTemplate(this.#comments);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 
