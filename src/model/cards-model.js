@@ -1,5 +1,5 @@
 import { generateFilmCard } from '../mock/data.js';
-import { generetIdIndex } from '../utils.js';
+import { generetIdIndex } from '../utils/utils.js';
 
 const FILM_CARDS_QUANTITY = 33;
 

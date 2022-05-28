@@ -1,5 +1,5 @@
 import { generateComments } from '../mock/data.js';
-import { generetIdIndex } from '../utils.js';
+import { generetIdIndex } from '../utils/utils.js';
 
 const COMMENTS_QUANTITY = 100;
 

@@ -1,9 +1,8 @@
 import {render} from '../framework/render.js';
-import MainNavigationView from '../view/main-navigation-view.js';
 import SortView from '../view/sort-view.js';
 import FilmListPresenter from './film-list-presenter.js';
 import StatisticsView from '../view/statistics-view.js';
-import { genereteCommenatIdInFilmCard } from '../utils.js';
+import { genereteCommenatIdInFilmCard } from '../utils/utils.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import UserRankView from '../view/user-rank-view.js';
 
@@ -30,8 +29,6 @@ export default class FilmPresenter {
     this.#filmComments = [...this.#commentsModel.comments];
 
     this.filmCardsWithCommentsId = genereteCommenatIdInFilmCard(this.#filmComments, this.#filmCards, this.#renderCommentsCount); // добавляю id комментарии в карточку
-
-    render(new MainNavigationView(), this.#filmContainer);
 
     render(new StatisticsView(this.#filmCards), this.#siteFooterElement);
 
