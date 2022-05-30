@@ -34,18 +34,6 @@ export const getRandomDate = (start, end) => {
   return  new Date(start + Math.random() * (end - start));
 };
 
-// функция перевода минут в часы
-
-export const getTimeFromMins = (min) => {
-  const HOURS = Math.trunc(min / 60);
-  const MINUTES = min % 60;
-  if (HOURS === 0) {
-    return `${MINUTES}m`;
-  } else {
-    return `${HOURS}h ${MINUTES}m`;
-  }
-};
-
 // функция рандомного индекса id комментария
 export const getRandomIndexForComments = (list, count) => {
   const result = [];

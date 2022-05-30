@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import { getTimeFromMins } from '../utils.js';
+import { getTimeFromMins } from '../utils/time.js';
 
 const createFilmCardTemplate = (filmcard) => {
   const { filmInfo, userDetails, comments } = filmcard;
