@@ -33,6 +33,16 @@ export default class PopupCommentView extends AbstractView {
   get template() {
     return createPopupCommentTemplate(this.#comments);
   }
+
+  setPopupClicHandler = (callback) => {
+    this._callback.formClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupHandler);
+  };
+
+  #popupHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formClick();
+  };
 }
 
 

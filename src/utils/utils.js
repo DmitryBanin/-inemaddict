@@ -45,7 +45,7 @@ export const getRandomIndexForComments = (list, count) => {
 };
 
 // функция генрации id вкарточке фильма
-export const genereteCommenatIdInFilmCard = (filmComments, filmCards, numberOfCommentsOnFilm) => {
+export const genereteCommentIdInFilmCard = (filmComments, filmCards, numberOfCommentsOnFilm) => {
 
   const generetCommentsCard = (element) => {
     element.comments = getRandomIndexForComments(filmComments, getRandomInteger(numberOfCommentsOnFilm));
@@ -54,4 +54,18 @@ export const genereteCommenatIdInFilmCard = (filmComments, filmCards, numberOfCo
 
   filmCards.map(generetCommentsCard);
   return filmCards;
+};
+
+export const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
 };
