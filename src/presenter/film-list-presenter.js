@@ -3,20 +3,28 @@ import FilmCardView from '../view/film-card-view.js';
 import PopupFilmView from '../view/popup-film-view.js';
 import PopupCommentView from '../view/popup-comment-view.js';
 
+const Mode = { // !!!
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class FilmListPresenter {
   #filmListContainer = null;
   #changeData = null;
+  #changeMode = null;
 
   #filmCard = null;
   #commentsList = null;
+  #mode = Mode.DEFAULT; // !!!
 
   #filmCardComponent = null;
   #popupFilmCardComponent = null;
 
-  constructor(filmListContainer, commentsList, changeData) {
+  constructor(filmListContainer, commentsList, changeData, changeMode) {
     this.#filmListContainer = filmListContainer;
     this.#commentsList = commentsList;
     this.#changeData = changeData;
+    this.#changeMode = changeMode;
   }
 
   init = (filmCard) => {
@@ -44,11 +52,11 @@ export default class FilmListPresenter {
       return;
     }
 
-    if (this.#filmListContainer.contains(prevFilmCardComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
-    if (this.#filmListContainer.contains(prevPopupFilmCardComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#popupFilmCardComponent, prevPopupFilmCardComponent);
     }
 
@@ -59,6 +67,12 @@ export default class FilmListPresenter {
   destroy = () => {
     remove(this.#filmCardComponent);
     remove(this.#popupFilmCardComponent);
+  };
+
+  resetView = () => {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFilmCardClickHandler();
+    }
   };
 
   #generetCommentsList = (commentsListElement, comments, filmCommentIds) => {
@@ -82,12 +96,15 @@ export default class FilmListPresenter {
     this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
   };
 
   #replacePopupCloseButtonClickHandler = () => {
     this.#filmListContainer.removeChild(this.#popupFilmCardComponent.element);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
+    this.#mode = Mode.DEFAULT;
   };
 
   #onEscKeyDown = (evt) => {
@@ -114,12 +131,11 @@ export default class FilmListPresenter {
   };
 
   #handleWatchedClick = () => {
-    this.#changeData({ ...this.#filmCard, watched: !this.#filmCard.userDetails.watched });
-
+    this.#changeData({ ...this.#filmCard, userDetails: {...this.#filmCard.userDetails, watched: !this.#filmCard.userDetails.watched} });
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.#filmCard, favorite: !this.#filmCard.userDetails.favorite });
+    this.#changeData({ ...this.#filmCard, userDetails: {...this.#filmCard.userDetails, favorite: !this.#filmCard.userDetails.favorite} });
   };
 
   #handlePopupCloseButton = () => {

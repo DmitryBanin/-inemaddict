@@ -48,7 +48,6 @@ export default class FilmPresenter {
     this.#filmCards = [...this.#cardsModel.cards];
     this.#filmComments = [...this.#commentsModel.comments];
     this.#filmCardsWithCommentsID = genereteCommentIdInFilmCard(this.#filmComments, this.#filmCards, this.#renderCommentCount);
-    // console.log(this.#filmCards[0].userDetails.watchlist);
     this.#renderFilmList();
   };
 
@@ -59,6 +58,10 @@ export default class FilmPresenter {
     if (this.#renderedCardCount >= this.#filmCardsWithCommentsID.length) {
       remove(this.#buttonShowMoreComponent);
     }
+  };
+
+  #handleModeChange = () => {
+    this.#filmPresenter.forEach((presenter) => presenter.resetView());
   };
 
   #handleFilmCardChange = (updatedFilmCard) => {
@@ -89,7 +92,7 @@ export default class FilmPresenter {
   };
 
   #renderFilmCard = (filmCard) => {
-    const filmListPresenter = new FilmListPresenter(this.#filmsListContainerComponent.element, this.#filmComments, this.#handleFilmCardChange);
+    const filmListPresenter = new FilmListPresenter(this.#filmsListContainerComponent.element, this.#filmComments, this.#handleFilmCardChange, this.#handleModeChange);
     filmListPresenter.init(filmCard);
     this.#filmPresenter.set(filmCard.id, filmListPresenter);
   };
