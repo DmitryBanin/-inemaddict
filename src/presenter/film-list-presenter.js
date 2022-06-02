@@ -5,19 +5,22 @@ import PopupCommentView from '../view/popup-comment-view.js';
 
 export default class FilmListPresenter {
   #filmListContainer = null;
+  #changeData = null;
 
-  #filmCards = null;
+  #filmCard = null;
   #commentsList = null;
+
   #filmCardComponent = null;
   #popupFilmCardComponent = null;
 
-  constructor(filmListContainer, commentsList) {
+  constructor(filmListContainer, commentsList, changeData) {
     this.#filmListContainer = filmListContainer;
     this.#commentsList = commentsList;
+    this.#changeData = changeData;
   }
 
   init = (filmCard) => {
-    this.#filmCards = filmCard;
+    this.#filmCard = filmCard;
 
     const prevFilmCardComponent = this.#filmCardComponent;
     const prevPopupFilmCardComponent = this.#popupFilmCardComponent;
@@ -26,25 +29,26 @@ export default class FilmListPresenter {
     this.#popupFilmCardComponent = new PopupFilmView(filmCard);
 
     this.#filmCardComponent.setFilmCardClickHandler(this.#handleFilmCardClick);
-    this.#popupFilmCardComponent.setClosePopupHandler(this.#handleClosePopup);
+    this.#popupFilmCardComponent.setPopupClickHandler(this.#handlePopupCloseButton);
 
-    // this.#filmCardComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
-    // this.#filmCardComponent.setWatchedClickHandler(this.#handleWatchedClick);
-    // this.#filmCardComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#filmCardComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
+    this.#filmCardComponent.setWatchedClickHandler(this.#handleWatchedClick);
+    this.#filmCardComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
+    this.#popupFilmCardComponent.setPopupWatchlistClickHandler(this.#handleWatchlistClick);
+    this.#popupFilmCardComponent.setPopupWatchedClickHandler(this.#handleWatchedClick);
+    this.#popupFilmCardComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
 
     if (prevFilmCardComponent === null || prevPopupFilmCardComponent === null) {
       render(this.#filmCardComponent, this.#filmListContainer);
       return;
     }
 
-    // Проверка на наличие в DOM необходима,
-    // чтобы не пытаться заменить то, что не было отрисовано
-    if (this.#filmListContainer.element.contains(prevFilmCardComponent.element)) {
+    if (this.#filmListContainer.contains(prevFilmCardComponent.element)) {
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
-    if (this.#filmListContainer.element.contains(prevPopupFilmCardComponent.element)) {
+    if (this.#filmListContainer.contains(prevPopupFilmCardComponent.element)) {
       replace(this.#popupFilmCardComponent, prevPopupFilmCardComponent);
     }
 
@@ -57,36 +61,31 @@ export default class FilmListPresenter {
     remove(this.#popupFilmCardComponent);
   };
 
-
-  #generetCommentsList = (commentsComponent, commentsList, filmList) => {
-    commentsList.forEach((elementComments) => {
-      filmList.forEach((elementFilm) => {
-        if (elementFilm === elementComments.id) {
-          const PopupComment = new PopupCommentView(elementComments);
-          render(PopupComment, commentsComponent);
-        }
+  #generetCommentsList = (commentsListElement, comments, filmCommentIds) => {
+    comments
+      .filter((comment) => filmCommentIds.includes(comment.id))
+      .forEach((comment) => {
+        const PopupComment = new PopupCommentView(comment);
+        render(PopupComment, commentsListElement);
       });
-    });
   };
 
-  #setFilmDetails = () => {
+  #genereteFilmDetailsCommentsList = () => {
     this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
-    const commentsList = document.querySelector('.film-details__comments-list');
-    this.#generetCommentsList(commentsList, this.#commentsList, this.#filmCards.comments);
+    const commentsListElement = document.querySelector('.film-details__comments-list');
+    commentsListElement.innerText = '';
+    this.#generetCommentsList(commentsListElement, this.#commentsList, this.#filmCard.comments);
   };
 
-  #removeFilmDetails = () => {
-    this.#filmListContainer.removeChild(this.#popupFilmCardComponent.element);
-  };
-
-  #setFilmCardClickHandler = () => {
-    this.#setFilmDetails();
+  #replaceFilmCardClickHandler = () => {
+    this.#genereteFilmDetailsCommentsList();
+    this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #setPopupClickHandler = () => {
-    this.#removeFilmDetails();
+  #replacePopupCloseButtonClickHandler = () => {
+    this.#filmListContainer.removeChild(this.#popupFilmCardComponent.element);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
@@ -94,19 +93,36 @@ export default class FilmListPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#removeFilmDetails();
-      document.removeEventListener('keydown', this.#onEscKeyDown);
-      document.addEventListener('keydown', this.#onEscKeyDown);
+      this.#replacePopupCloseButtonClickHandler();
       document.body.classList.remove('hide-overflow');
-      remove();
+      document.removeEventListener('keydown', this.#onEscKeyDown);
     }
   };
 
   #handleFilmCardClick = () => {
-    this.#setFilmCardClickHandler();
+    this.#replaceFilmCardClickHandler();
   };
 
-  #handleClosePopup = () => {
-    this.#setPopupClickHandler();
+  #handleWatchlistClick = () => {
+
+    // const copy = JSON.parse(JSON.stringify(this.#filmCard));
+    // copy.userDetails.watchlist =!copy.userDetails.watchlist;
+    // this.#changeData(copy);
+
+    this.#changeData({ ...this.#filmCard, userDetails: {...this.#filmCard.userDetails, watchlist: !this.#filmCard.userDetails.watchlist} });
+
+  };
+
+  #handleWatchedClick = () => {
+    this.#changeData({ ...this.#filmCard, watched: !this.#filmCard.userDetails.watched });
+
+  };
+
+  #handleFavoriteClick = () => {
+    this.#changeData({ ...this.#filmCard, favorite: !this.#filmCard.userDetails.favorite });
+  };
+
+  #handlePopupCloseButton = () => {
+    this.#replacePopupCloseButtonClickHandler();
   };
 }

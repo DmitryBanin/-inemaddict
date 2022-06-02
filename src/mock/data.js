@@ -103,7 +103,6 @@ export const generateComments = () => (
 
 export const generateFilmCard = () => (
   {
-    comments: [1, 2, 30],
     filmInfo: {
       title: getRandomElement(filmTitles),
       alternativeTitle: getRandomElement(alternativeTitles),
@@ -122,9 +121,9 @@ export const generateFilmCard = () => (
       description: getRandomElement(descriptions),
     },
     userDetails: {
-      watchlist: getRandomInteger(),
-      watched: getRandomInteger(),
+      watchlist: Boolean(getRandomInteger(0, 1)),
+      watched: Boolean(getRandomInteger(0, 1)),
       watchingDate: getRandomDate(startDate, endDate),
-      favorite: getRandomInteger(),
+      favorite: Boolean(getRandomInteger(0, 1)),
     }
   });
