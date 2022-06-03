@@ -9,10 +9,10 @@ const siteMainElement = document.querySelector('.main');
 
 const cardsModel = new CardsModel();
 const commentsModel = new CommentsModel();
-const filmPresenter = new FilmPresenter();
+const filmPresenter = new FilmPresenter(siteMainElement, cardsModel, commentsModel);
 
 const filters = generateFilter(cardsModel.cards);
 
 render(new MainNavigationView(filters), siteMainElement);
 
-filmPresenter.initMain(siteMainElement, cardsModel, commentsModel);
+filmPresenter.init();

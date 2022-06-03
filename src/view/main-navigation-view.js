@@ -1,17 +1,18 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {FilterType} from '../const';
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const { name, count } = filter;
 
   const getName = (names) => {
     switch (names) {
-      case 'all':
+      case FilterType.ALL:
         return 'All movies';
-      case 'watchlist':
+      case FilterType.WATCHLIST:
         return 'Watchlist';
-      case 'history':
+      case FilterType.HISTORY:
         return 'History';
-      case 'favorites':
+      case FilterType.FAVORITES:
         return 'Favorites';
     }
   };
