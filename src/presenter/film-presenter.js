@@ -21,7 +21,7 @@ export default class FilmPresenter {
   #filmContainer = null;
   #cardsModel = null;
   #commentsModel = null;
-  #filmCardsWithCommentsID = null;
+  #filmsData = null;
 
   #filmsComponent = new FilmsView();
   #filmsListComponent = new FilmsListView();
@@ -40,7 +40,7 @@ export default class FilmPresenter {
   #renderCommentCount = FILM_COMMENT_QUANTITY;
   #filmPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
-  #sourcedFilmCards = [];
+  #sourcedFilmsData = [];
   #filmCardsgenereted = [];
 
   constructor(filmContainer, cardsModel, commentsModel) {
@@ -53,21 +53,18 @@ export default class FilmPresenter {
     this.#filmCards = [...this.#cardsModel.cards];
     this.#filmComments = [...this.#commentsModel.comments];
     this.#filmCardsgenereted = genereteCommentIdInFilmCard(this.#filmComments, this.#filmCards, this.#renderCommentCount);
-    this.#filmCardsWithCommentsID = [...this.#filmCardsgenereted];
-    // 1. В отличии от сортировки по любому параметру,
-    // исходный порядок можно сохранить только одним способом -
-    // сохранив исходный массив:
-    this.#sourcedFilmCards = [...this.#filmCardsgenereted];
+    this.#filmsData = [...this.#filmCardsgenereted];
+    this.#sourcedFilmsData = [...this.#filmCardsgenereted];
 
-    this.#renderFilmList();
+    this.#renderComponents();
   };
 
-  #handleButtonShowMoreClick = () => {
+  #handleButtonShowMore = () => {
     this.#renderFilmCards(this.#renderedCardCount, this.#renderedCardCount + CARD_COUNT_PER_STEP);
     this.#renderedCardCount += CARD_COUNT_PER_STEP;
 
-    if (this.#renderedCardCount >= this.#filmCardsWithCommentsID.length) {
-      remove(this.#buttonShowMoreComponent);
+    if (this.#renderedCardCount >= this.#filmsData.length) {
+      this.#buttonShowMoreComponent.destroy();
     }
   };
 
@@ -76,29 +73,9 @@ export default class FilmPresenter {
   };
 
   #handleFilmCardChange = (updatedFilmCard) => {
-    this.#filmCardsWithCommentsID = updateItem(this.#filmCardsWithCommentsID, updatedFilmCard);
-    this.#sourcedFilmCards = updateItem(this.#sourcedFilmCards, updatedFilmCard);
+    this.#filmsData = updateItem(this.#filmsData, updatedFilmCard);
+    this.#sourcedFilmsData = updateItem(this.#sourcedFilmsData, updatedFilmCard);
     this.#filmPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
-  };
-
-  #sortFilmCards = (sortType) => {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
-    switch (sortType) {
-      case SortType.DATE:
-        this.#filmCardsWithCommentsID.sort(sortReleaseDate);
-        break;
-      case SortType.RATING:
-        this.#filmCardsWithCommentsID.sort(sortFilmRating);
-        break;
-      default:
-        // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _boardTasks исходный массив
-        this.#filmCardsWithCommentsID = [...this.#sourcedFilmCards];
-    }
-
-    this.#currentSortType = sortType;
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -106,9 +83,23 @@ export default class FilmPresenter {
       return;
     }
 
+    this.#currentSortType = sortType;
     this.#sortFilmCards(sortType);
-    this.#clearFilmCardList();
-    this.#renderFilmCard();
+    this.#clearCardList();
+    this.#renderCardList();
+  };
+
+  #sortFilmCards = (sortType) => {
+    switch (sortType) {
+      case SortType.DATE:
+        this.#filmsData.sort(sortReleaseDate);
+        break;
+      case SortType.RATING:
+        this.#filmsData.sort(sortFilmRating);
+        break;
+      default:
+        this.#filmsData = [...this.#sourcedFilmsData];
+    }
   };
 
   #renderSort = () => {
@@ -125,55 +116,56 @@ export default class FilmPresenter {
   };
 
   #renderStatistics = () => {
-    render(new StatisticsView(this.#filmCardsWithCommentsID), this.#siteFooterElement);
+    render(new StatisticsView(this.#filmsData), this.#siteFooterElement);
   };
 
-  #renderFilmCard = (filmCard) => {
+  #renderFilmCard = (data) => {
     const filmListPresenter = new FilmListPresenter(this.#filmsListContainerComponent.element, this.#filmComments, this.#handleFilmCardChange, this.#handleModeChange);
-    filmListPresenter.init(filmCard);
-    this.#filmPresenter.set(filmCard.id, filmListPresenter);
+    filmListPresenter.init(data);
+    this.#filmPresenter.set(data.id, filmListPresenter);
   };
 
   #renderFilmCards = (from, to) => {
-    this.#filmCardsWithCommentsID
+    this.#filmsData
       .slice(from, to)
-      .forEach((filmCard) => this.#renderFilmCard(filmCard));
+      .forEach((data) => this.#renderFilmCard(data));
   };
 
   #renderButtonShowMore = () => {
     render(this.#buttonShowMoreComponent, this.#filmsListComponent.element);
-    this.#buttonShowMoreComponent.setClickHandler(this.#handleButtonShowMoreClick);
+    this.#buttonShowMoreComponent.setClickHandler(this.#handleButtonShowMore);
   };
 
-  #clearFilmCardList = () => {
+  #clearCardList = () => {
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
     this.#renderedCardCount = CARD_COUNT_PER_STEP;
     remove(this.#buttonShowMoreComponent);
   };
 
-  #renderFilmCardList = () => {
+  #renderCardList = () => {
     render(this.#filmsListComponent, this.#filmsComponent.element);
     render(this.#filmsListContainerComponent, this.#filmsListComponent.element);
 
-    this.#renderFilmCards(0, Math.min(this.#filmCardsWithCommentsID.length, CARD_COUNT_PER_STEP));
+    this.#renderFilmCards(0, Math.min(this.#filmsData.length, CARD_COUNT_PER_STEP));
 
-    if (this.#filmCardsWithCommentsID.length > CARD_COUNT_PER_STEP) {
+    if (this.#filmsData.length > CARD_COUNT_PER_STEP) {
       this.#renderButtonShowMore();
     }
   };
 
-  #renderFilmList = () => {
+  #renderComponents = () => {
     render(this.#filmsComponent, this.#filmContainer);
 
-    if (!this.#filmCardsWithCommentsID.length) {
+    if (!this.#filmsData.length) {
       this.#renderListEmpty();
-    } else {
-      this. #renderSort();
-
-      this.#renderUserRank();
-      this.#renderStatistics();
-      this.#renderFilmCardList();
+      return;
     }
+
+    this.#renderSort();
+    this.#renderUserRank();
+    this.#renderStatistics();
+    this.#renderCardList();
+
   };
 }
