@@ -11,7 +11,6 @@ import FilmsListView from '../view/films-list-view.js';
 import FilmsListContainerView from '../view/films-list-container-view.js';
 import { sortReleaseDate, sortFilmRating } from '../utils/card.js';
 import { SortType } from '../const.js';
-import dayjs from 'dayjs';
 
 const FILM_COMMENT_QUANTITY = 20;
 const CARD_COUNT_PER_STEP = 5;
