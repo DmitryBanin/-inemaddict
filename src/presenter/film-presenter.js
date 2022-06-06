@@ -62,23 +62,6 @@ export default class FilmPresenter {
     this.#renderFilmList();
   };
 
-  #getWeightForNullValue = (valueA, valueB) => {
-    // проверка на наличие null?
-    if (valueA === null && valueB === null) {
-      return 0;
-    }
-
-    if (valueA === null) {
-      return 1;
-    }
-
-    if (valueB === null) {
-      return -1;
-    }
-
-    return null;
-  };
-
   #handleButtonShowMoreClick = () => {
     this.#renderFilmCards(this.#renderedCardCount, this.#renderedCardCount + CARD_COUNT_PER_STEP);
     this.#renderedCardCount += CARD_COUNT_PER_STEP;
