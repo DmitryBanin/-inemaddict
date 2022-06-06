@@ -3,7 +3,7 @@ import FilmCardView from '../view/film-card-view.js';
 import PopupFilmView from '../view/popup-film-view.js';
 import PopupCommentView from '../view/popup-comment-view.js';
 
-const Mode = { // !!!
+const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
@@ -15,7 +15,7 @@ export default class FilmListPresenter {
 
   #filmCard = null;
   #commentsList = null;
-  #mode = Mode.DEFAULT; // !!!
+  #mode = Mode.DEFAULT;
 
   #filmCardComponent = null;
   #popupFilmCardComponent = null;
@@ -121,13 +121,7 @@ export default class FilmListPresenter {
   };
 
   #handleWatchlistClick = () => {
-
-    // const copy = JSON.parse(JSON.stringify(this.#filmCard));
-    // copy.userDetails.watchlist =!copy.userDetails.watchlist;
-    // this.#changeData(copy);
-
     this.#changeData({ ...this.#filmCard, userDetails: {...this.#filmCard.userDetails, watchlist: !this.#filmCard.userDetails.watchlist} });
-
   };
 
   #handleWatchedClick = () => {

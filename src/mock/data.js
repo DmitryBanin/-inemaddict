@@ -106,7 +106,7 @@ export const generateFilmCard = () => (
     filmInfo: {
       title: getRandomElement(filmTitles),
       alternativeTitle: getRandomElement(alternativeTitles),
-      totalRating: getRandomFloat(MIN_TOTAL_RATINGS_COUNT, MAX_TOTAL_RATINGS_COUNT),
+      totalRating: parseFloat(getRandomFloat(MIN_TOTAL_RATINGS_COUNT, MAX_TOTAL_RATINGS_COUNT)),
       poster: getRandomElement(posters),
       ageRating: getRandomInteger(MIN_AGE_RATINGS_COUNT, MAX_AGE_RATINGS_COUNT),
       director: getRandomElement(directors),
