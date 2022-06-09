@@ -87,8 +87,7 @@ const MAX_WRITERS_COUNT = 3;
 const MIN_GENRES_COUNT = 1;
 const MAX_GENRES_COUNT = 3;
 
-const MIN_AGE_RATINGS_COUNT = 0;
-const MAX_AGE_RATINGS_COUNT = 18;
+const ageRating = [0, 12, 16, 18];
 
 const MIN_TOTAL_RATINGS_COUNT = 0;
 const MAX_TOTAL_RATINGS_COUNT = 10;
@@ -108,7 +107,7 @@ export const generateFilmCard = () => (
       alternativeTitle: getRandomElement(alternativeTitles),
       totalRating: parseFloat(getRandomFloat(MIN_TOTAL_RATINGS_COUNT, MAX_TOTAL_RATINGS_COUNT)),
       poster: getRandomElement(posters),
-      ageRating: getRandomInteger(MIN_AGE_RATINGS_COUNT, MAX_AGE_RATINGS_COUNT),
+      ageRating: getRandomElement(ageRating),
       director: getRandomElement(directors),
       writers: getRandomIndexFromList(writers, getRandomInteger(MIN_WRITERS_COUNT, MAX_WRITERS_COUNT)),
       actors: getRandomIndexFromList(actors, getRandomInteger(MIN_ACTORS_COUNT, MAX_ACTORS_COUNT)),

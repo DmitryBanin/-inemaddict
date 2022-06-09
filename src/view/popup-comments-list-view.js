@@ -1,9 +1,14 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 const createPopupCommentTemplate = (comments) => {
   const { author, comment, date, emotion } = comments;
-  const commentDay = dayjs(date).format('YYYY/MM/DD HH:mm');
+  const commentDate = dayjs(date).fromNow();
 
   return (
     `<li class="film-details__comment">
@@ -14,7 +19,7 @@ const createPopupCommentTemplate = (comments) => {
         <p class="film-details__comment-text">${comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
-          <span class="film-details__comment-day">${commentDay}</span>
+          <span class="film-details__comment-day">${commentDate}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
@@ -22,7 +27,7 @@ const createPopupCommentTemplate = (comments) => {
   );
 };
 
-export default class PopupCommentView extends AbstractView {
+export default class PopupCommentsListView extends AbstractView {
   #comments = null;
 
   constructor(comments) {

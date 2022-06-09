@@ -1,6 +1,14 @@
 import AbstractView from '../framework/view/abstract-view.js';
+// import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
 import { getTimeFromMins } from '../utils/time.js';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+dayjs.extend(localizedFormat);
 
 const createPopupFilmTemplate = (filmcard) => {
   const { filmInfo, userDetails, comments } = filmcard;
@@ -9,12 +17,22 @@ const createPopupFilmTemplate = (filmcard) => {
   const { date, country } = release;
   const formatedDatePopup = dayjs(date).format('DD MMMM YYYY');
   const durationFormat = getTimeFromMins(runTime);
+  // const durationFormat = dayjs.duration(runTime).asHours();
   const { watchlist, watched, favorite } = userDetails;
   const watchlistSelect = watchlist ? ' ' : 'film-details__control-button--active';
   const alreadyWatchedSelect = watched ? ' ' : 'film-details__control-button--active';
   const favoriteSelect = favorite ? ' ' : 'film-details__control-button--active';
-  const endName = (element) => element.length === 1 ? ' ' : 's';
   const commentsCount = comments.length;
+
+  const endName = (element) => element.length === 1 ? ' ' : 's';
+
+  const createGenreList = () => {
+    const genresList = [];
+    for (const element of genre) {
+      genresList.push(`<span class="film-details__genre">${element}</span>`);
+    }
+    return genresList.join('\n');
+  };
 
   return (
     `<section class="film-details">
@@ -69,9 +87,7 @@ const createPopupFilmTemplate = (filmcard) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genre${endName(genre)}</td>
                   <td class="film-details__cell">
-                  <span class="film-details__genre">${genre.join(' ')}</span>
-                    </td>
-                </tr>
+                  ${createGenreList()}
               </table>
 
               <p class="film-details__film-description">
@@ -104,39 +120,12 @@ const createPopupFilmTemplate = (filmcard) => {
 
             <ul class="film-details__comments-list">
 
-            <!-- popup-comment-view -->
+            <!-- popup-comments-list-view -->
 
             </ul>
 
-            <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+            <!-- popup-new-comment-view -->
 
-              <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-              </label>
-
-              <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
-              </div>
-            </div>
           </section>
         </div>
       </form>
