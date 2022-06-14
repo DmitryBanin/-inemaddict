@@ -2,11 +2,11 @@ import {render, replace, remove} from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupFilmView from '../view/popup-film-view.js';
 import PopupCommentsListView from '../view/popup-comments-list-view.js';
-// import PopupNewCommentView from '../view/popup-new-comment-view.js';
+import PopupNewCommentView from '../view/popup-new-comment-view.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
+  POPUP: 'POPUP',
 };
 
 export default class FilmListPresenter {
@@ -20,6 +20,7 @@ export default class FilmListPresenter {
 
   #filmCardComponent = null;
   #popupFilmCardComponent = null;
+  #popupNewCommentComponent = null;
 
   constructor(filmListContainer, commentsList, changeData, changeMode) {
     this.#filmListContainer = filmListContainer;
@@ -36,9 +37,10 @@ export default class FilmListPresenter {
 
     this.#filmCardComponent = new FilmCardView(filmCard);
     this.#popupFilmCardComponent = new PopupFilmView(filmCard);
+    this.#popupNewCommentComponent = new PopupNewCommentView();
 
-    this.#filmCardComponent.setFilmCardClickHandler(this.#handleFilmCardClick);
-    this.#popupFilmCardComponent.setPopupClickHandler(this.#handlePopupCloseButton);
+    this.#filmCardComponent.setFilmCardClickHandler(this.#openPopupClickHandler);
+    this.#popupFilmCardComponent.setPopupClickHandler(this. #closePopupClickHandler);
 
     this.#filmCardComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#filmCardComponent.setWatchedClickHandler(this.#handleWatchedClick);
@@ -57,7 +59,7 @@ export default class FilmListPresenter {
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
-    if (this.#mode === Mode.EDITING) {
+    if (this.#mode === Mode.POPUP) {
       replace(this.#popupFilmCardComponent, prevPopupFilmCardComponent);
     }
 
@@ -76,17 +78,6 @@ export default class FilmListPresenter {
     }
   };
 
-  // #handleCtrlCmdEnterKeydown = (evt, newCommentInput) => {
-  //   const {emotion, comment} = newCommentInput;
-  //   const newCommentData = {
-  //     author: 'new author',
-  //     comment: comment,
-  //     date: new Date(),
-  //     emotion: emotion,
-  //   };
-  //   this.#renderComment(newCommentData);
-  // };
-
   #generetCommentsListById = (commentsListElement, comments, filmCommentIds) => {
     comments
       .filter((comment) => filmCommentIds.includes(comment.id))
@@ -96,21 +87,32 @@ export default class FilmListPresenter {
       });
   };
 
-  // #createNewComment = () => {
-  //   const commentsListElement = document.querySelector('.film-details__comments-wrap');
-  //   render(new PopupNewCommentView(), commentsListElement);
-  // };
+  #handleCtrCmdEnterKeydown = (newCommentInput) => {
+    const {emotion, comment} = newCommentInput;
+    const newCommentData = {
+      author: 'new author',
+      comment: comment,
+      date: new Date(),
+      emotion: emotion,
+    };
+    this.#createCommentsList(newCommentData);
+  };
 
-  #createFilmDetailsCommentsList = () => {
+  #renderNewCommentForm = () => {
+    render(this.#popupNewCommentComponent, this.#popupFilmCardComponent.newCommentContainer);
+    this.#popupNewCommentComponent.setNewCommentEnter(this.#handleCtrCmdEnterKeydown);
+  };
+
+  #createCommentsList = (newCommentData) => {
     this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
-    const commentsListElement = document.querySelector('.film-details__comments-list');
-    commentsListElement.innerText = '';
-    this.#generetCommentsListById(commentsListElement, this.#commentsList, this.#filmCard.comments);
+    const filmDetailsCommentsListElement = document.querySelector('.film-details__comments-list');
+    filmDetailsCommentsListElement.innerText = '';
+    this.#generetCommentsListById(filmDetailsCommentsListElement, newCommentData, this.#filmCard.comments);
   };
 
   #openPopupClickHandler = () => {
-    // this.#createFilmDetailsCommentsList();
-    // this.#createNewComment();
+    this.#createCommentsList(this.#commentsList);
+    this.#renderNewCommentForm();
     this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -122,6 +124,7 @@ export default class FilmListPresenter {
     this.#filmListContainer.removeChild(this.#popupFilmCardComponent.element);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
+    document.removeEventListener('keydown', this.#handleCtrCmdEnterKeydown);
     this.#mode = Mode.DEFAULT;
   };
 
@@ -129,13 +132,7 @@ export default class FilmListPresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.#closePopupClickHandler();
-      document.body.classList.remove('hide-overflow');
-      document.removeEventListener('keydown', this.#onEscKeyDown);
     }
-  };
-
-  #handleFilmCardClick = () => {
-    this.#openPopupClickHandler();
   };
 
   #handleWatchlistClick = () => {
@@ -148,9 +145,5 @@ export default class FilmListPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData({ ...this.#filmCard, userDetails: {...this.#filmCard.userDetails, favorite: !this.#filmCard.userDetails.favorite} });
-  };
-
-  #handlePopupCloseButton = () => {
-    this.#closePopupClickHandler();
   };
 }

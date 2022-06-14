@@ -1,7 +1,7 @@
 import { generateComments } from '../mock/data.js';
 import { generetIdIndex } from '../utils/utils.js';
 
-const COMMENTS_QUANTITY = 100;
+const COMMENTS_QUANTITY = 66;
 
 export default class CommentsModel {
 

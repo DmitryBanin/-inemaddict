@@ -1,14 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-// import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
 import { getTimeFromMins } from '../utils/time.js';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
-dayjs.extend(localizedFormat);
 
 const createPopupFilmTemplate = (filmcard) => {
   const { filmInfo, userDetails, comments } = filmcard;
@@ -17,7 +9,6 @@ const createPopupFilmTemplate = (filmcard) => {
   const { date, country } = release;
   const formatedDatePopup = dayjs(date).format('DD MMMM YYYY');
   const durationFormat = getTimeFromMins(runTime);
-  // const durationFormat = dayjs.duration(runTime).asHours();
   const { watchlist, watched, favorite } = userDetails;
   const watchlistSelect = watchlist ? ' ' : 'film-details__control-button--active';
   const alreadyWatchedSelect = watched ? ' ' : 'film-details__control-button--active';
@@ -143,6 +134,10 @@ export default class PopupFilmView extends AbstractView {
 
   get template() {
     return createPopupFilmTemplate(this.#filmCard);
+  }
+
+  get newCommentContainer() {
+    return this.element.querySelector('.film-details__comments-wrap');
   }
 
   setPopupClickHandler = (callback) => {

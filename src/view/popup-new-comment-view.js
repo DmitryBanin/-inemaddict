@@ -34,15 +34,86 @@ const createPopupNewCommentTemplate = () => (
 
 export default class PopupNewCommentView extends AbstractStatefulView {
   _state = null;
+  #emotionSelector = null;
+  #commentEmotionLable = null;
+  #commentText = null;
 
   constructor () {
     super();
     this._state = {};
+    this.#setInnerHandlers();
   }
-
-  _restoreHandlers() {}
 
   get template() {
     return createPopupNewCommentTemplate();
   }
+
+  static initState = () =>  ({
+    emotion: '',
+    comment: '',
+  });
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+  };
+
+  static convertStateToData = (state) => {
+    const commentData =  {...state};
+    return commentData;
+  };
+
+  setNewCommentEnter(callback) {
+    this._callback.newCommentEnterKeydown = callback;
+    document.addEventListener('keydown', this.#newCommentEntertHandler);
+  }
+
+  #newCommentEntertHandler = (evt) => {
+    if ((evt.ctrlKey || evt.metaKey) && (evt.code === 'Enter' || evt.key === 'Enter')){
+      evt.preventDefault();
+      const commentData = PopupNewCommentView.convertStateToData(this._state);
+      this._callback.newCommentEnterKeydown(evt, commentData);
+      this.updateElement(PopupNewCommentView.initState);
+      this.element.scrollIntoView(top);
+    }
+  };
+
+  #createNewCommentEmotionLabel = (emotionValue) => `<img src="images/emoji/${emotionValue}.png" width="55" height="55" alt="emoji-${emotionValue}">`;
+
+  #emotionSelectorClickHandler = (evt) => {
+    if (!evt.target.classList.contains('film-details__emoji-item')){
+      return;
+    }
+    evt.preventDefault();
+    const emotionItem = evt.target;
+    const emotionValue = evt.target.value;
+    this._setState({
+      emotion: emotionValue,
+    });
+    if (this.#commentEmotionLable.firstChild){
+      this.#commentEmotionLable.removeChild(this.#commentEmotionLable.firstChild);
+      const emotionInputs = this.#emotionSelector.querySelectorAll('input');
+      emotionInputs.forEach((element) => {element.removeAttribute('checked');});
+    }
+    this.#commentEmotionLable.insertAdjacentHTML('beforeend',
+      this.#createNewCommentEmotionLabel(emotionValue));
+    emotionItem.setAttribute('checked', '');
+  };
+
+  #commentInputHandler = (evt) => {
+    evt.preventDefault();
+    const commentText = evt.target.value;
+    this._setState({
+      comment: commentText,
+    });
+  };
+
+  #setInnerHandlers = () => {
+    this.#commentEmotionLable = this.element.querySelector('.film-details__add-emoji-label');
+
+    this.#commentText = this.element.querySelector('.film-details__comment-input');
+    this.#commentText.addEventListener('input', this.#commentInputHandler);
+
+    this.#emotionSelector = this.element.querySelector('.film-details__emoji-list');
+    this.#emotionSelector.addEventListener('click', this.#emotionSelectorClickHandler);
+  };
 }
