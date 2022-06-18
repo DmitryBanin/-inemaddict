@@ -136,6 +136,10 @@ export default class PopupFilmView extends AbstractView {
     return createPopupFilmTemplate(this.#filmCard);
   }
 
+  get commentsContainer() {
+    return this.element.querySelector('.film-details__comments-list');
+  }
+
   get newCommentContainer() {
     return this.element.querySelector('.film-details__comments-wrap');
   }

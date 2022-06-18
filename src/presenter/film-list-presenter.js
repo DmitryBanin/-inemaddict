@@ -1,8 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupFilmView from '../view/popup-film-view.js';
-import PopupCommentsListView from '../view/popup-comments-list-view.js';
-import PopupNewCommentView from '../view/popup-new-comment-view.js';
+import PopupCommentsListView from '../view/comments-list-view.js';
+import PopupNewCommentView from '../view/new-comment-view.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -31,7 +31,6 @@ export default class FilmListPresenter {
 
   init = (filmCard) => {
     this.#filmCard = filmCard;
-
     const prevFilmCardComponent = this.#filmCardComponent;
     const prevPopupFilmCardComponent = this.#popupFilmCardComponent;
 
@@ -55,16 +54,11 @@ export default class FilmListPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) {
-      replace(this.#filmCardComponent, prevFilmCardComponent);
-    }
+    replace(this.#filmCardComponent, prevFilmCardComponent);
+    replace(this.#popupFilmCardComponent, prevPopupFilmCardComponent);
 
-    if (this.#mode === Mode.POPUP) {
-      replace(this.#popupFilmCardComponent, prevPopupFilmCardComponent);
-    }
-
-    remove(prevFilmCardComponent);
-    remove(prevPopupFilmCardComponent);
+    this.#renderComments(this.#commentsList);
+    this.#renderNewCommentForm();
   };
 
   destroy = () => {
@@ -78,16 +72,15 @@ export default class FilmListPresenter {
     }
   };
 
-  #generetCommentsListById = (commentsListElement, comments, filmCommentIds) => {
-    comments
-      .filter((comment) => filmCommentIds.includes(comment.id))
-      .forEach((comment) => {
-        const PopupComment = new PopupCommentsListView(comment);
-        render(PopupComment, commentsListElement);
-      });
+  #generetCommentsListById = (commentsList) => {
+    const commentFin = [];
+    commentsList
+      .filter((comment) => this.#filmCard.comments.includes(comment.id))
+      .map((comment) => { commentFin.push(comment); });
+    return commentFin;
   };
 
-  #handleCtrCmdEnterKeydown = (newCommentInput) => {
+  #handleCtrCmdEnterKeydown = (evt, newCommentInput) => {
     const {emotion, comment} = newCommentInput;
     const newCommentData = {
       author: 'new author',
@@ -95,7 +88,7 @@ export default class FilmListPresenter {
       date: new Date(),
       emotion: emotion,
     };
-    this.#createCommentsList(newCommentData);
+    this.#renderComment(newCommentData);
   };
 
   #renderNewCommentForm = () => {
@@ -103,21 +96,24 @@ export default class FilmListPresenter {
     this.#popupNewCommentComponent.setNewCommentEnter(this.#handleCtrCmdEnterKeydown);
   };
 
-  #createCommentsList = (newCommentData) => {
-    this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
-    const filmDetailsCommentsListElement = document.querySelector('.film-details__comments-list');
-    filmDetailsCommentsListElement.innerText = '';
-    this.#generetCommentsListById(filmDetailsCommentsListElement, newCommentData, this.#filmCard.comments);
+  #renderComments = (filmCommentsData) => {
+    const commentsInFilm = this.#generetCommentsListById(filmCommentsData);
+    commentsInFilm.forEach((filmComment) => {
+      this.#renderComment(filmComment);});
+  };
+
+  #renderComment = (filmComment) => {
+    render(new PopupCommentsListView(filmComment), this.#popupFilmCardComponent.commentsContainer);
   };
 
   #openPopupClickHandler = () => {
-    this.#createCommentsList(this.#commentsList);
-    this.#renderNewCommentForm();
     this.#filmListContainer.appendChild(this.#popupFilmCardComponent.element);
     document.body.classList.add('hide-overflow');
+    this. #renderComments(this.#commentsList);
+    this.#renderNewCommentForm();
     document.addEventListener('keydown', this.#onEscKeyDown);
     this.#changeMode();
-    this.#mode = Mode.EDITING;
+    this.#mode = Mode.POPUP;
   };
 
   #closePopupClickHandler = () => {

@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
-const createPopupNewCommentTemplate = () => (
+const createNewCommentTemplate = () => (
   `<div class="film-details__new-comment">
     <div class="film-details__add-emoji-label"></div>
 
@@ -32,7 +32,7 @@ const createPopupNewCommentTemplate = () => (
   </div>`
 );
 
-export default class PopupNewCommentView extends AbstractStatefulView {
+export default class NewCommentView extends AbstractStatefulView {
   _state = null;
   #emotionSelector = null;
   #commentEmotionLable = null;
@@ -45,7 +45,7 @@ export default class PopupNewCommentView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPopupNewCommentTemplate();
+    return createNewCommentTemplate();
   }
 
   static initState = () =>  ({
@@ -70,9 +70,9 @@ export default class PopupNewCommentView extends AbstractStatefulView {
   #newCommentEntertHandler = (evt) => {
     if ((evt.ctrlKey || evt.metaKey) && (evt.code === 'Enter' || evt.key === 'Enter')){
       evt.preventDefault();
-      const commentData = PopupNewCommentView.convertStateToData(this._state);
+      const commentData = NewCommentView.convertStateToData(this._state);
       this._callback.newCommentEnterKeydown(evt, commentData);
-      this.updateElement(PopupNewCommentView.initState);
+      this.updateElement(NewCommentView.initState);
       this.element.scrollIntoView(top);
     }
   };

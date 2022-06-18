@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const createPopupCommentTemplate = (comments) => {
+const createCommentTemplate = (comments) => {
   const { author, comment, date, emotion } = comments;
   const commentDate = dayjs(date).fromNow();
 
@@ -27,7 +27,7 @@ const createPopupCommentTemplate = (comments) => {
   );
 };
 
-export default class PopupCommentsListView extends AbstractView {
+export default class CommentsListView extends AbstractView {
   #comments = null;
 
   constructor(comments) {
@@ -36,7 +36,7 @@ export default class PopupCommentsListView extends AbstractView {
   }
 
   get template() {
-    return createPopupCommentTemplate(this.#comments);
+    return createCommentTemplate(this.#comments);
   }
 
   setPopupClicHandler = (callback) => {
