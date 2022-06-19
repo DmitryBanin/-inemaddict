@@ -55,7 +55,6 @@ export default class FilmPresenter {
     this.#filmCardsgenereted = genereteCommentIdInFilmCard(this.#filmComments, this.#filmCards, this.#renderCommentCount);
     this.#filmsData = [...this.#filmCardsgenereted];
     this.#sourcedFilmsData = [...this.#filmCardsgenereted];
-
     this.#renderComponents();
   };
 
