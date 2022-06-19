@@ -1,12 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import { getTimeFromMins } from '../utils/time.js';
 
 const createFilmCardTemplate = (filmcard) => {
   const { filmInfo, userDetails, comments } = filmcard;
   const { release, title, poster, totalRating, genre, description, runTime } = filmInfo;
   const { date } = release;
-  const durationFormat = getTimeFromMins(runTime);
+  const durationFormat = dayjs.duration(runTime, 'minutes').format('H[h] m[m]');
   const yearFormat = dayjs(date).format('YYYY');
   const { watchlist, watched, favorite } = userDetails;
   const watchlistSelect = watchlist ? ' ' : 'film-card__controls-item--active';

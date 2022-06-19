@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import { getTimeFromMins } from '../utils/time.js';
 
 const createPopupFilmTemplate = (filmcard) => {
   const { filmInfo, userDetails, comments } = filmcard;
@@ -8,7 +7,7 @@ const createPopupFilmTemplate = (filmcard) => {
   const { release } = filmInfo;
   const { date, country } = release;
   const formatedDatePopup = dayjs(date).format('DD MMMM YYYY');
-  const durationFormat = getTimeFromMins(runTime);
+  const durationFormat = dayjs.duration(runTime, 'minutes').format('H[h] m[m]');
   const { watchlist, watched, favorite } = userDetails;
   const watchlistSelect = watchlist ? ' ' : 'film-details__control-button--active';
   const alreadyWatchedSelect = watched ? ' ' : 'film-details__control-button--active';
